@@ -1,0 +1,745 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>editor &#8212; Programming  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for editor</h1><div class="highlight"><pre>
+<span></span><span class="c1">#   ProPoint documentation master file, created by</span>
+<span class="c1">#  sphinx-quickstart on Mon Nov 20 00:55:55 2017.</span>
+<span class="c1">#   You can adapt this file completely to your liking, but it should at least</span>
+<span class="c1">#   contain the root `toctree` directive.</span>
+
+<span class="c1">#   Welcome to ProPoint&#39;s documentation!</span>
+<span class="c1">#   ====================================</span>
+<span class="c1">#   This is my introduction to the project &#39;PROPOINT&#39;.</span>
+
+<span class="c1">#   The ProPoint is a collaborative text editor specifically built for</span>
+<span class="c1">#   Coding community in order to collaborate and build interesting Software.</span>
+<span class="c1">#   It has some interesting functionality which is very rare in the any other</span>
+<span class="c1">#   collaborative editors, one of those is to have an offline interface for</span>
+<span class="c1">#   collaboration. Since it is offline, users can edit the view of their documents</span>
+<span class="c1">#   in the same way a non-coding editor edits its text field. In spite of being a</span>
+<span class="c1">#   collaborative editor it supports all features of a normal text editor like,</span>
+<span class="c1">#   saving the document or opening an existing document from the PC</span>
+<span class="c1">#   directly. Our aim is to ease the collaboration between coders.</span>
+
+<span class="c1">#   Requirements :</span>
+<span class="c1">#</span>
+<span class="c1">#	- RethinkdB (2.3.6) must be installed.</span>
+<span class="c1">#	- Depends on package PyQt</span>
+
+
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span> <span class="k">as</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">PyQt4.Qt</span>
+<span class="kn">import</span> <span class="nn">rethinkdb</span> <span class="k">as</span> <span class="nn">r</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="k">import</span> <span class="n">QPushButton</span>
+
+<span class="kn">from</span> <span class="nn">Find_Object</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">share</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;Untitled&quot;</span>
+<span class="n">caseSensitive</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">wholeWord</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Main"><a class="viewcode-back" href="../editor.html#editor.Main">[docs]</a><span class="k">class</span> <span class="nc">Main</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class represents the main window of the editor.</span>
+
+<span class="sd">        Function involved :</span>
+<span class="sd">            - myToolBar()</span>
+<span class="sd">            - myFormatBar()</span>
+<span class="sd">            - myMenuBar()</span>
+<span class="sd">            - winFeatures()...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        -----------Constructor-----------</span>
+<span class="sd">                self,parent :parameter</span>
+<span class="sd">                parent: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="c1"># self.filename = &quot; ProPoint - Share your Projects &quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">senderThread</span> <span class="o">=</span> <span class="n">SenderThread</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_features</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Main.myToolbar"><a class="viewcode-back" href="../editor.html#editor.Main.myToolbar">[docs]</a>    <span class="k">def</span> <span class="nf">myToolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            self :parameter</span>
+<span class="sd">            :return:  None</span>
+
+<span class="sd">            This function sets the structure of the Toolbar in the editor. Also connects the designed buttons to their respective</span>
+<span class="sd">            functions defined in Main Class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;res/new_logo&quot;</span><span class="p">),</span> <span class="s1">&#39;New&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39; New &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+N&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_file</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFile</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/open&#39;</span><span class="p">),</span> <span class="s1">&#39;Open&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFile</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39; Open &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFile</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+O&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFile</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_file</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/save_logo&#39;</span><span class="p">),</span> <span class="s1">&#39;Save&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Create a new document&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+S&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_file</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutText</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/cut&#39;</span><span class="p">),</span> <span class="s1">&#39;Cut&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutText</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Cut&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutText</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+X&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutText</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">cut</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">copyText</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/copy&#39;</span><span class="p">),</span> <span class="s1">&#39;Copy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copyText</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Copy&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copyText</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+C&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copyText</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">copy</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pasteText</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/paste&#39;</span><span class="p">),</span> <span class="s1">&#39;Paste&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pasteText</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Paste&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pasteText</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+V&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pasteText</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">paste</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">undoFunc</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/Undo&#39;</span><span class="p">),</span> <span class="s1">&#39;Undo&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undoFunc</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Undo&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undoFunc</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+Z&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undoFunc</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">undo</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">redoFunc</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/Redo&#39;</span><span class="p">),</span> <span class="s1">&#39;Redo&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redoFunc</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Redo&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redoFunc</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+Y&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redoFunc</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">redo</span><span class="p">)</span>
+
+        <span class="n">findAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/find&#39;</span><span class="p">),</span> <span class="s1">&#39;Redo&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">findAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s2">&quot;Find&quot;</span><span class="p">)</span>
+        <span class="n">findAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;Ctrl+F&quot;</span><span class="p">)</span>
+        <span class="n">findAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Find</span><span class="p">)</span>
+
+        <span class="n">shareAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/share&#39;</span><span class="p">),</span> <span class="s2">&quot;Find&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">shareAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s2">&quot;Share&quot;</span><span class="p">)</span>
+        <span class="n">shareAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s2">&quot;Alt+S&quot;</span><span class="p">)</span>
+        <span class="n">shareAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Share</span><span class="p">)</span>
+
+        <span class="n">rb</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/recieve&#39;</span><span class="p">),</span> <span class="s1">&#39;Recieve&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">rb</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Recieve&#39;</span><span class="p">)</span>
+        <span class="n">rb</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+Shift+g&#39;</span><span class="p">)</span>
+        <span class="n">rb</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_btn</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openFile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cutText</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">copyText</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pasteText</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">undoFunc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redoFunc</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">findAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">shareAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">rb</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">addToolBarBreak</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Main.myFormatbar"><a class="viewcode-back" href="../editor.html#editor.Main.myFormatbar">[docs]</a>    <span class="k">def</span> <span class="nf">myFormatbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">textStyle</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontComboBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">textStyle</span><span class="o">.</span><span class="n">currentFontChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textStyle</span><span class="p">)</span>
+
+        <span class="n">textSize</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">textSize</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">textSize</span><span class="o">.</span><span class="n">setMinimumContentsLength</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">textSize</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textSize</span><span class="p">)</span>
+
+        <span class="n">textSizes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;6&#39;</span><span class="p">,</span> <span class="s1">&#39;7&#39;</span><span class="p">,</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;9&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;16&#39;</span><span class="p">,</span> <span class="s1">&#39;18&#39;</span><span class="p">,</span> <span class="s1">&#39;20&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;22&#39;</span><span class="p">,</span> <span class="s1">&#39;24&#39;</span><span class="p">,</span> <span class="s1">&#39;26&#39;</span><span class="p">,</span> <span class="s1">&#39;28&#39;</span><span class="p">,</span> <span class="s1">&#39;32&#39;</span><span class="p">,</span> <span class="s1">&#39;36&#39;</span><span class="p">,</span> <span class="s1">&#39;48&#39;</span><span class="p">,</span> <span class="s1">&#39;72&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">textSizes</span><span class="p">:</span>
+            <span class="n">textSize</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">fontCol</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/fontCol&#39;</span><span class="p">),</span> <span class="s1">&#39;Font Color&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">fontCol</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textCol</span><span class="p">)</span>
+
+        <span class="n">hiCol</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/hiCol&#39;</span><span class="p">),</span> <span class="s1">&#39;Highlight text&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">hiCol</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+
+        <span class="n">boldAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/bold&#39;</span><span class="p">),</span> <span class="s2">&quot;Bold text&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">boldAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Bold&#39;</span><span class="p">)</span>
+        <span class="n">boldAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+B&#39;</span><span class="p">)</span>
+        <span class="n">boldAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bold</span><span class="p">)</span>
+
+        <span class="n">italicAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/Italic&#39;</span><span class="p">),</span> <span class="s2">&quot;Italic text&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">italicAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Italic&#39;</span><span class="p">)</span>
+        <span class="n">italicAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+I&#39;</span><span class="p">)</span>
+        <span class="n">italicAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">italic</span><span class="p">)</span>
+
+        <span class="n">underlineAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/underline&#39;</span><span class="p">),</span> <span class="s2">&quot;Underline text&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">underlineAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Underline Text&#39;</span><span class="p">)</span>
+        <span class="n">underlineAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+U&#39;</span><span class="p">)</span>
+        <span class="n">underlineAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underline</span><span class="p">)</span>
+
+        <span class="n">indentAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/indent&#39;</span><span class="p">),</span> <span class="s2">&quot;Indent text&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">indentAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Indent&#39;</span><span class="p">)</span>
+        <span class="n">indentAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+Tab&#39;</span><span class="p">)</span>
+        <span class="n">indentAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Indent</span><span class="p">)</span>
+
+        <span class="n">alignRightAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/rightAllign&#39;</span><span class="p">),</span> <span class="s2">&quot;Align text Right&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">alignRightAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Align Right&#39;</span><span class="p">)</span>
+        <span class="n">alignRightAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignRight</span><span class="p">)</span>
+
+        <span class="n">alignLeftAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/leftAllign&#39;</span><span class="p">),</span> <span class="s2">&quot;Align text Left&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">alignLeftAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Align Left&#39;</span><span class="p">)</span>
+        <span class="n">alignLeftAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignLeft</span><span class="p">)</span>
+
+        <span class="n">alignCenterAction</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/CenterAllign&#39;</span><span class="p">),</span> <span class="s2">&quot;Align text Center&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">alignCenterAction</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Align Center&#39;</span><span class="p">)</span>
+        <span class="n">alignCenterAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignCenter</span><span class="p">)</span>
+
+        <span class="n">bulletList</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/bullet&#39;</span><span class="p">),</span> <span class="s1">&#39;Bulleted List&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">bulletList</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Bulleted List&#39;</span><span class="p">)</span>
+        <span class="n">bulletList</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+Shift+B&#39;</span><span class="p">)</span>
+        <span class="n">bulletList</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bullet_list</span><span class="p">)</span>
+
+        <span class="n">numList</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/numbered&#39;</span><span class="p">),</span> <span class="s1">&#39;Numbered List&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">numList</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s1">&#39;Numbered List&#39;</span><span class="p">)</span>
+        <span class="n">numList</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="s1">&#39;Ctrl+Shift+L&#39;</span><span class="p">)</span>
+        <span class="n">numList</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_list</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="s2">&quot;Format&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">textStyle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">textSize</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fontCol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">hiCol</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">indentAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">alignLeftAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">alignRightAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">alignCenterAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">bulletList</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">numList</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">boldAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">italicAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">underlineAction</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.myMenubar"><a class="viewcode-back" href="../editor.html#editor.Main.myMenubar">[docs]</a>    <span class="k">def</span> <span class="nf">myMenubar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            self :parameter</span>
+<span class="sd">            :return: None</span>
+
+<span class="sd">            Designs menu items in Menu such as File and Edit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menubar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">menubar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;File&quot;</span><span class="p">)</span>
+        <span class="n">edit</span> <span class="o">=</span> <span class="n">menubar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Edit&quot;</span><span class="p">)</span>
+        <span class="n">about</span> <span class="o">=</span> <span class="n">menubar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;About&quot;</span><span class="p">)</span>
+        <span class="n">help</span> <span class="o">=</span> <span class="n">menubar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;Help&quot;</span><span class="p">)</span>
+
+        <span class="n">file</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">)</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openFile</span><span class="p">)</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span><span class="p">)</span>
+
+        <span class="n">edit</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cutText</span><span class="p">)</span>
+        <span class="n">edit</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">copyText</span><span class="p">)</span>
+        <span class="n">edit</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pasteText</span><span class="p">)</span>
+        <span class="n">edit</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">undoFunc</span><span class="p">)</span>
+        <span class="n">edit</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redoFunc</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.win_features"><a class="viewcode-back" href="../editor.html#editor.Main.win_features">[docs]</a>    <span class="k">def</span> <span class="nf">win_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :parameter: self</span>
+<span class="sd">            :return: None</span>
+
+<span class="sd">            This function provides features such as toolbar, menubar etc..... by calling the functions defined above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Main</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1030</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;ProPoint - Untitled&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;res/logo1.png&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">myToolbar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">myFormatbar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">myMenubar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mystatusbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">cursorPositionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">curPosition</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.new_file"><a class="viewcode-back" href="../editor.html#editor.Main.new_file">[docs]</a>    <span class="k">def</span> <span class="nf">new_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :parameter: self</span>
+<span class="sd">            :return: None</span>
+
+<span class="sd">            This function creates a new file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">temp1</span> <span class="o">=</span> <span class="n">Main</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">temp1</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Main.open_file"><a class="viewcode-back" href="../editor.html#editor.Main.open_file">[docs]</a>    <span class="k">def</span> <span class="nf">open_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function opens an existing file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Open&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.save_file"><a class="viewcode-back" href="../editor.html#editor.Main.save_file">[docs]</a>    <span class="k">def</span> <span class="nf">save_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function saves a file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Save&#39;</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Main.bullet_list"><a class="viewcode-back" href="../editor.html#editor.Main.bullet_list">[docs]</a>    <span class="k">def</span> <span class="nf">bullet_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function creates a bulleted list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cur</span><span class="o">.</span><span class="n">insertList</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextListFormat</span><span class="o">.</span><span class="n">ListDisc</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.num_list"><a class="viewcode-back" href="../editor.html#editor.Main.num_list">[docs]</a>    <span class="k">def</span> <span class="nf">num_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function creates a Numbered list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cur</span><span class="o">.</span><span class="n">insertList</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTextListFormat</span><span class="o">.</span><span class="n">ListDecimal</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.Indent"><a class="viewcode-back" href="../editor.html#editor.Main.Indent">[docs]</a>    <span class="k">def</span> <span class="nf">Indent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                :parameter: self</span>
+<span class="sd">                :return: None</span>
+
+<span class="sd">                This function indents the document.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tab</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">selectionStart</span><span class="p">()</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">selectionEnd</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">cur</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">EndOfLine</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">position</span><span class="p">()</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">position</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="n">cursor</span><span class="o">.</span><span class="n">position</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">var</span>
+            <span class="c1"># print(cursor.position(),end)</span>
+
+            <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">StartOfLine</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">insertText</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">Down</span><span class="p">)</span>
+            <span class="n">end</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.alignLeft"><a class="viewcode-back" href="../editor.html#editor.Main.alignLeft">[docs]</a>    <span class="k">def</span> <span class="nf">alignLeft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                :parameter: self</span>
+<span class="sd">                :return: None</span>
+
+<span class="sd">                This function aligns the document left.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.alignRight"><a class="viewcode-back" href="../editor.html#editor.Main.alignRight">[docs]</a>    <span class="k">def</span> <span class="nf">alignRight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                :parameter: self</span>
+<span class="sd">                :return: None</span>
+
+<span class="sd">                This function aligns the document Right.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.alignCenter"><a class="viewcode-back" href="../editor.html#editor.Main.alignCenter">[docs]</a>    <span class="k">def</span> <span class="nf">alignCenter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :parameter: self</span>
+<span class="sd">            :return: None</span>
+
+<span class="sd">            This function aligns the document to center.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.bold"><a class="viewcode-back" href="../editor.html#editor.Main.bold">[docs]</a>    <span class="k">def</span> <span class="nf">bold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :parameter: self</span>
+<span class="sd">            :return: None</span>
+
+<span class="sd">            This function makes the selected text Bold.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">fontWeight</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">weight</span> <span class="o">==</span> <span class="mi">50</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontWeight</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">Bold</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">weight</span> <span class="o">==</span> <span class="mi">75</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontWeight</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">Normal</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.italic"><a class="viewcode-back" href="../editor.html#editor.Main.italic">[docs]</a>    <span class="k">def</span> <span class="nf">italic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                :parameter: self</span>
+<span class="sd">                :return: None</span>
+
+<span class="sd">                This function makes the selected text italic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">incline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">fontItalic</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">incline</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontItalic</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">incline</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontItalic</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.underline"><a class="viewcode-back" href="../editor.html#editor.Main.underline">[docs]</a>    <span class="k">def</span> <span class="nf">underline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function underlines the selected text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">fontUnderline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">uline</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontUnderline</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">uline</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontUnderline</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.textStyle"><a class="viewcode-back" href="../editor.html#editor.Main.textStyle">[docs]</a>    <span class="k">def</span> <span class="nf">textStyle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function changes the font style.</span>
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setCurrentFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.textSize"><a class="viewcode-back" href="../editor.html#editor.Main.textSize">[docs]</a>    <span class="k">def</span> <span class="nf">textSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fontsize</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function changes the text size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setFontPointSize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fontsize</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Main.textCol"><a class="viewcode-back" href="../editor.html#editor.Main.textCol">[docs]</a>    <span class="k">def</span> <span class="nf">textCol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function sets the font colour.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColorDialog</span><span class="o">.</span><span class="n">getColor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setTextColor</span><span class="p">(</span><span class="n">col</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.highlight"><a class="viewcode-back" href="../editor.html#editor.Main.highlight">[docs]</a>    <span class="k">def</span> <span class="nf">highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function sets the background of the font.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColorDialog</span><span class="o">.</span><span class="n">getColor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setTextBackgroundColor</span><span class="p">(</span><span class="n">col</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.Share"><a class="viewcode-back" href="../editor.html#editor.Main.Share">[docs]</a>    <span class="k">def</span> <span class="nf">Share</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    Builds a dialog box to input the data in order to share the document.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">share1</span> <span class="o">=</span> <span class="n">Share</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">share1</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">shareHandler</span><span class="p">():</span>
+            <span class="n">uName</span> <span class="o">=</span> <span class="n">share1</span><span class="o">.</span><span class="n">userTextBox</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">uName</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">((</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="s1">&#39;a&#39;</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="s1">&#39;z&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="s1">&#39;A&#39;</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="s1">&#39;Z&#39;</span><span class="p">)):</span>
+                     <span class="n">flag</span> <span class="o">=</span><span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">flag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">uName</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">QWidget</span><span class="p">(),</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span><span class="s2">&quot;Enter valid User Name </span><span class="se">\n</span><span class="s2"> Username must consist of only alphabets&quot;</span><span class="p">)</span>
+            <span class="c1">#flag = 0</span>
+
+            <span class="n">dName</span> <span class="o">=</span> <span class="n">share1</span><span class="o">.</span><span class="n">docTextBox</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dName</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">((</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="s1">&#39;a&#39;</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="s1">&#39;z&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="s1">&#39;A&#39;</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="s1">&#39;Z&#39;</span><span class="p">)):</span>
+                    <span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">flag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">dName</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">QWidget</span><span class="p">(),</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span><span class="s2">&quot;Enter valid Document Name </span><span class="se">\n</span><span class="s2"> Document Name must consist of atleast 1 alphabet&quot;</span><span class="p">)</span>
+
+
+            <span class="n">k</span> <span class="o">=</span> <span class="n">share1</span><span class="o">.</span><span class="n">kTextBox</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="n">share1</span><span class="o">.</span><span class="n">share</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">shareHandler</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Main.Find"><a class="viewcode-back" href="../editor.html#editor.Main.Find">[docs]</a>    <span class="k">def</span> <span class="nf">Find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    :parameter: self</span>
+<span class="sd">                    :return: None</span>
+
+<span class="sd">                    This function has the code to implement the cases to find a string in the editor window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">global</span> <span class="n">f</span>
+
+        <span class="n">find</span> <span class="o">=</span> <span class="n">Find</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">find</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">handleFind</span><span class="p">():</span>
+
+            <span class="n">f</span> <span class="o">=</span> <span class="n">find</span><span class="o">.</span><span class="n">findTextBox</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="n">casesen</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">wholeword</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">casesen</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">wholeword</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindBackward</span> <span class="ow">and</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindCaseSensitively</span>
+
+            <span class="k">elif</span> <span class="n">casesen</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">wholeword</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindBackward</span>
+
+            <span class="k">elif</span> <span class="n">casesen</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">wholeword</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindBackward</span> <span class="ow">and</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindWholeWords</span>
+
+            <span class="k">elif</span> <span class="n">casesen</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">wholeword</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindBackward</span> <span class="ow">and</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindCaseSensitively</span> <span class="ow">and</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindWholeWords</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">flag</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">handleReplace</span><span class="p">():</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">find</span><span class="o">.</span><span class="n">findTextBox</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">find</span><span class="o">.</span><span class="n">replaceTextBox</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
+
+            <span class="n">newText</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newText</span><span class="p">)</span>
+
+        <span class="n">find</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">handleFind</span><span class="p">)</span>
+        <span class="n">find</span><span class="o">.</span><span class="n">replaceButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">handleReplace</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Main.curPosition"><a class="viewcode-back" href="../editor.html#editor.Main.curPosition">[docs]</a>    <span class="k">def</span> <span class="nf">curPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                :parameter: self</span>
+<span class="sd">                :return: None</span>
+
+<span class="sd">                This function provides the position of the cursor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">senderThread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">global</span> <span class="n">data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">global</span> <span class="n">r_data</span>
+        <span class="n">r_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="c1"># r_data = str(self.text.setText(r_data))</span>
+        <span class="c1"># self.text.moveCursor(QtGui.QTextCursor.End)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="n">data</span>
+        <span class="c1"># self.send_data(data)</span>
+
+
+        <span class="k">global</span> <span class="n">cur</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+        <span class="n">line_no</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">blockNumber</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">col_no</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">columnNumber</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mystatusbar</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s2">&quot;Line : </span><span class="si">{}</span><span class="s2"> | Column : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line_no</span><span class="p">,</span> <span class="n">col_no</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Main.get_btn"><a class="viewcode-back" href="../editor.html#editor.Main.get_btn">[docs]</a>    <span class="k">def</span> <span class="nf">get_btn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                                    :parameter: self</span>
+<span class="sd">                                    :return: None</span>
+
+<span class="sd">                                    This function is used to recieve the document from database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">28015</span><span class="p">)</span><span class="o">.</span><span class="n">repl</span><span class="p">()</span>
+        <span class="nb">list</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">table_list</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;proPoints&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>  <span class="c1"># its proPoints not proPoint</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;proPoints&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="n">var1</span> <span class="o">=</span> <span class="n">QString</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+            <span class="n">var2</span> <span class="o">=</span> <span class="n">QString</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">var2</span> <span class="o">==</span> <span class="s2">&quot;pujam&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">var1</span><span class="p">)</span></div></div>
+        <span class="c1">#else:</span>
+            <span class="c1">#self.send_btn(&quot; &quot;)</span>
+
+
+
+
+
+<div class="viewcode-block" id="SenderThread"><a class="viewcode-back" href="../editor.html#editor.SenderThread">[docs]</a><span class="k">class</span> <span class="nc">SenderThread</span><span class="p">(</span><span class="n">QThread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                                :parameter: self</span>
+
+<span class="sd">                                This class implemets  methods to create new thread for updating the database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">QThread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SenderThread.run"><a class="viewcode-back" href="../editor.html#editor.SenderThread.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="s2">&quot;Send call&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="s2">&quot;Sent&quot;</span>
+        <span class="nb">print</span> <span class="s2">&quot;Thread done&quot;</span></div>
+
+<div class="viewcode-block" id="SenderThread.send_data"><a class="viewcode-back" href="../editor.html#editor.SenderThread.send_data">[docs]</a>    <span class="k">def</span> <span class="nf">send_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">28015</span><span class="p">)</span><span class="o">.</span><span class="n">repl</span><span class="p">()</span>
+        <span class="nb">list</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">table_list</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;proPoints&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>  <span class="c1"># its proPoints not proPoint</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;table exists&quot;</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;proPoints&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;pujam&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">data</span>
+            <span class="p">})</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;updated&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">table_create</span><span class="p">(</span><span class="s2">&quot;proPoints&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;proPoints&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">insert</span><span class="p">({</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;pujam&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;robin&quot;</span>
+            <span class="p">})</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;inserted&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;finished&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../editor.html#editor.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">main</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+    <span class="n">main</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="pujam" default="all">
+  
+  
+  <property file="pujam.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="project.jdk.home" value="${jdk.home.python_2.7.12_(/usr/bin/python2.7)}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.python_2.7.12_(/usr/bin/python2.7)}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.python_2.7.12_(/usr/bin/python2.7)"/>
+  
+  
+  <!-- Global Libraries -->
+  
+  <path id="library.python_2.7.12_(/usr/bin/python2.7)_interpreter_library.classpath">
+    <pathelement location="/home/robin/.IdeaIC2017.2/config/plugins/python-ce/helpers/python-skeletons"/>
+    <pathelement location="/home/robin/.IdeaIC2017.2/config/plugins/python-ce/helpers/typeshed/stdlib/2"/>
+    <pathelement location="/home/robin/.IdeaIC2017.2/config/plugins/python-ce/helpers/typeshed/stdlib/2and3"/>
+    <pathelement location="/home/robin/.IdeaIC2017.2/config/plugins/python-ce/helpers/typeshed/third_party/2"/>
+    <pathelement location="/home/robin/.IdeaIC2017.2/config/plugins/python-ce/helpers/typeshed/third_party/2and3"/>
+    <pathelement location="/home/robin/.IdeaIC2017.2/system/python_stubs/-1247972723"/>
+    <pathelement location="/home/robin/.local/lib/python2.7/site-packages"/>
+    <pathelement location="/usr/lib/python2.7"/>
+    <pathelement location="/usr/lib/python2.7/dist-packages"/>
+    <pathelement location="/usr/lib/python2.7/dist-packages/gtk-2.0"/>
+    <pathelement location="/usr/lib/python2.7/dist-packages/wx-3.0-gtk2"/>
+    <pathelement location="/usr/lib/python2.7/lib-dynload"/>
+    <pathelement location="/usr/lib/python2.7/lib-tk"/>
+    <pathelement location="/usr/lib/python2.7/plat-x86_64-linux-gnu"/>
+    <pathelement location="/usr/local/lib/python2.7/dist-packages"/>
+    <pathelement location="/usr/local/lib/python2.7/dist-packages/setuptools-28.8.0-py2.7.egg"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module pujam -->
+  
+  <dirname property="module.pujam.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.pujam" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pujam" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pujam" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pujam" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="pujam.output.dir" value="undefined"/>
+  <property name="pujam.testoutput.dir" value="undefined"/>
+  
+  <path id="pujam.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pujam.module.production.classpath">
+    <path refid="${module.jdk.classpath.pujam}"/>
+    <path refid="library.python_2.7.12_(/usr/bin/python2.7)_interpreter_library.classpath"/>
+  </path>
+  
+  <path id="pujam.runtime.production.module.classpath">
+    <path refid="library.python_2.7.12_(/usr/bin/python2.7)_interpreter_library.classpath"/>
+  </path>
+  
+  <path id="pujam.module.classpath">
+    <path refid="${module.jdk.classpath.pujam}"/>
+    <path refid="library.python_2.7.12_(/usr/bin/python2.7)_interpreter_library.classpath"/>
+  </path>
+  
+  <path id="pujam.runtime.module.classpath">
+    <path refid="library.python_2.7.12_(/usr/bin/python2.7)_interpreter_library.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pujam">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pujam">
+    <patternset refid="excluded.from.module.pujam"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pujam" depends="compile.module.pujam.production,compile.module.pujam.tests" description="Compile module pujam"/>
+  
+  <target name="compile.module.pujam.production" depends="register.custom.compilers" description="Compile module pujam; production classes"/>
+  
+  <target name="compile.module.pujam.tests" depends="register.custom.compilers,compile.module.pujam.production" description="compile module pujam; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pujam" description="cleanup module">
+    <delete dir="${pujam.output.dir}"/>
+    <delete dir="${pujam.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.pujam" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.pujam" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>

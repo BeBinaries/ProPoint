@@ -1,0 +1,511 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>editor module &#8212; Programming  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="share module" href="share.html" />
+    <link rel="prev" title="Find_Object module" href="Find_Object.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-editor">
+<span id="editor-module"></span><h1>editor module<a class="headerlink" href="#module-editor" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="editor.Main">
+<em class="property">class </em><code class="descclassname">editor.</code><code class="descname">Main</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">PyQt4.QtGui.QMainWindow</span></code></p>
+<p>This class represents the main window of the editor.</p>
+<dl class="docutils">
+<dt>Function involved :</dt>
+<dd><ul class="first last simple">
+<li>myToolBar()</li>
+<li>myFormatBar()</li>
+<li>myMenuBar()</li>
+<li>winFeatures()…</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="editor.Main.Find">
+<code class="descname">Find</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.Find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.Find" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function has the code to implement the cases to find a string in the editor window.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.Indent">
+<code class="descname">Indent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.Indent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.Indent" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function indents the document.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.Share">
+<code class="descname">Share</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.Share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.Share" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>Builds a dialog box to input the data in order to share the document.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.alignCenter">
+<code class="descname">alignCenter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.alignCenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.alignCenter" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function aligns the document to center.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.alignLeft">
+<code class="descname">alignLeft</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.alignLeft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.alignLeft" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function aligns the document left.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.alignRight">
+<code class="descname">alignRight</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.alignRight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.alignRight" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function aligns the document Right.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.bold">
+<code class="descname">bold</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.bold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.bold" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function makes the selected text Bold.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.bullet_list">
+<code class="descname">bullet_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.bullet_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.bullet_list" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function creates a bulleted list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.curPosition">
+<code class="descname">curPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.curPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.curPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function provides the position of the cursor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.get_btn">
+<code class="descname">get_btn</code><span class="sig-paren">(</span><em>r_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.get_btn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.get_btn" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function is used to recieve the document from database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.highlight">
+<code class="descname">highlight</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.highlight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.highlight" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function sets the background of the font.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.italic">
+<code class="descname">italic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.italic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.italic" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function makes the selected text italic.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.myFormatbar">
+<code class="descname">myFormatbar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.myFormatbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.myFormatbar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.myMenubar">
+<code class="descname">myMenubar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.myMenubar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.myMenubar" title="Permalink to this definition">¶</a></dt>
+<dd><p>self :parameter
+:return: None</p>
+<p>Designs menu items in Menu such as File and Edit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.myToolbar">
+<code class="descname">myToolbar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.myToolbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.myToolbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>self :parameter
+:return:  None</p>
+<p>This function sets the structure of the Toolbar in the editor. Also connects the designed buttons to their respective
+functions defined in Main Class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.new_file">
+<code class="descname">new_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.new_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.new_file" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function creates a new file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.num_list">
+<code class="descname">num_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.num_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.num_list" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function creates a Numbered list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.open_file">
+<code class="descname">open_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.open_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.open_file" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function opens an existing file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.save_file">
+<code class="descname">save_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.save_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.save_file" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function saves a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.textCol">
+<code class="descname">textCol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.textCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.textCol" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function sets the font colour.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.textSize">
+<code class="descname">textSize</code><span class="sig-paren">(</span><em>fontsize</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.textSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.textSize" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function changes the text size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.textStyle">
+<code class="descname">textStyle</code><span class="sig-paren">(</span><em>font</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.textStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.textStyle" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function changes the font style.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.underline">
+<code class="descname">underline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.underline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.underline" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function underlines the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editor.Main.win_features">
+<code class="descname">win_features</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#Main.win_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.Main.win_features" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>This function provides features such as toolbar, menubar etc….. by calling the functions defined above.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="editor.SenderThread">
+<em class="property">class </em><code class="descclassname">editor.</code><code class="descname">SenderThread</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#SenderThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.SenderThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">PyQt4.QtCore.QThread</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body">self</td>
+</tr>
+</tbody>
+</table>
+<p>This class implemets  methods to create new thread for updating the database.</p>
+<dl class="method">
+<dt id="editor.SenderThread.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#SenderThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.SenderThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="editor.SenderThread.send_data">
+<code class="descname">send_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#SenderThread.send_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.SenderThread.send_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="editor.bin">
+<code class="descclassname">editor.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>QTextStream</em><span class="sig-paren">)</span> &#x2192; QTextStream<a class="headerlink" href="#editor.bin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="editor.hex">
+<code class="descclassname">editor.</code><code class="descname">hex</code><span class="sig-paren">(</span><em>QTextStream</em><span class="sig-paren">)</span> &#x2192; QTextStream<a class="headerlink" href="#editor.hex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="editor.main">
+<code class="descclassname">editor.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editor.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editor.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="editor.oct">
+<code class="descclassname">editor.</code><code class="descname">oct</code><span class="sig-paren">(</span><em>QTextStream</em><span class="sig-paren">)</span> &#x2192; QTextStream<a class="headerlink" href="#editor.oct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Find_Object.html" title="previous chapter">Find_Object module</a></li>
+      <li>Next: <a href="share.html" title="next chapter">share module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/editor.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
