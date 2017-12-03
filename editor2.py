@@ -1,78 +1,93 @@
-#   ProPoint documentation master file, created by
-#  sphinx-quickstart on Mon Nov 20 00:55:55 2017.
-#   You can adapt this file completely to your liking, but it should at least
-#   contain the root `toctree` directive.
-
-#   Welcome to ProPoint's documentation!
-#   ====================================
-#   This is my introduction to the project 'PROPOINT'.
-
-#   The ProPoint is a collaborative text editor specifically built for
-#   Coding community in order to collaborate and build interesting Software.
-#   It has some interesting functionality which is very rare in the any other
-#   collaborative editors, one of those is to have an offline interface for
-#   collaboration. Since it is offline, users can edit the view of their documents
-#   in the same way a non-coding editor edits its text field. In spite of being a
-#   collaborative editor it supports all features of a normal text editor like,
-#   saving the document or opening an existing document from the PC
-#   directly. Our aim is to ease the collaboration between coders.
-
-#   Requirements :
-#
-#	- RethinkdB (2.3.6) must be installed.
-#	- Depends on package PyQt
-
-
-
 import sys
-import time as time
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui,QtCore
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import PyQt4.Qt
 import rethinkdb as r
 from PyQt4.QtGui import QPushButton
 
-from Find_Object import *
-from share import *
-
 
 filename = "Untitled"
 caseSensitive = False
 wholeWord = False
 
-class Main(QtGui.QMainWindow):
-    """
-        This class represents the main window of the editor.
 
-        Function involved :
-            - myToolBar()
-            - myFormatBar()
-            - myMenuBar()
-            - winFeatures()...
-
-    """
+class Find(QtGui.QDialog):
     def __init__(self, parent=None):
-        """
-        -----------Constructor-----------
-                self,parent :parameter
-                parent: None
-        """
-        QtGui.QMainWindow.__init__(self, parent)
-        # self.filename = " ProPoint - Share your Projects "
+        QtGui.QDialog.__init__(self, parent)
 
-        self.senderThread = SenderThread()
+        self.initUI()
+
+    def initUI(self):
+
+        self.label1 = QtGui.QLabel("Search for: ", self)
+        self.label1.setStyleSheet("font-size: 15px; ")
+        self.label1.move(10, 10)
+
+        self.findTextBox = QtGui.QTextEdit(self)
+        self.findTextBox.move(10, 40)
+        self.findTextBox.resize(250, 25)
+
+        self.src = QtGui.QPushButton("Find", self)
+        self.src.move(270, 40)
+
+        self.label2 = QtGui.QLabel("Replace all by: ", self)
+        self.label2.setStyleSheet("font-size: 15px; ")
+        self.label2.move(10, 80)
+
+        self.replaceTextBox = QtGui.QTextEdit(self)
+        self.replaceTextBox.move(10, 110)
+        self.replaceTextBox.resize(250, 25)
+
+        self.replaceButton = QtGui.QPushButton("Replace", self)
+        self.replaceButton.move(270, 110)
+
+        self.option1 = QtGui.QCheckBox("Case sensitive", self)
+        self.option1.move(10, 160)
+        self.option1.stateChanged.connect(self.CaseSen)
+
+        self.option2 = QtGui.QCheckBox("Whole words only", self)
+        self.option2.move(10, 190)
+        self.option2.stateChanged.connect(self.WholeWordOnly)
+
+        self.close = QtGui.QPushButton("Close", self)
+        self.close.move(270, 220)
+        self.close.clicked.connect(self.Close)
+
+        self.setGeometry(300, 300, 360, 250)
+
+    def CaseSen(self, state):
+        global caseSensitive
+
+        if state == QtCore.Qt.Checked:
+            caseSensitive = True
+        else:
+            caseSensitive = False
+
+    def WholeWordOnly(self, state):
+        global wholeWord
+        print wholeWord
+
+        if state == QtCore.Qt.Checked:
+            wholeWord = True
+        else:
+            wholeWord = False
+
+    def Close(self):
+        self.hide()
+
+
+
+
+class Main( QtGui.QMainWindow):
+    def __init__(self, parent = None):
+        QtGui.QMainWindow.__init__(self, parent)
+       # self.filename = " ProPoint - Share your Projects "
         self.win_features()
 
     def myToolbar(self):
-        """
-            self :parameter
-            :return:  None
 
-            This function sets the structure of the Toolbar in the editor. Also connects the designed buttons to their respective
-            functions defined in Main Class.
-        """
-        self.newFile = QtGui.QAction(QtGui.QIcon("res/new_logo"), 'New', self)
+        self.newFile = QtGui.QAction(QtGui.QIcon("res/new_logo"),'New',self)
         self.newFile.setStatusTip(' New ')
         self.newFile.setShortcut('Ctrl+N')
         self.newFile.triggered.connect(self.new_file)
@@ -112,20 +127,16 @@ class Main(QtGui.QMainWindow):
         self.redoFunc.setShortcut('Ctrl+Y')
         self.redoFunc.triggered.connect(self.text.redo)
 
-        findAction = QtGui.QAction(QtGui.QIcon('res/find'), 'Redo', self)
+        findAction = QtGui.QAction(QtGui.QIcon('res/find'), "Find", self)
         findAction.setStatusTip("Find")
         findAction.setShortcut("Ctrl+F")
         findAction.triggered.connect(self.Find)
-
-        shareAction = QtGui.QAction(QtGui.QIcon('res/share'), "Find", self)
-        shareAction.setStatusTip("Share")
-        shareAction.setShortcut("Alt+S")
-        shareAction.triggered.connect(self.Share)
 
         rb = QtGui.QAction(QtGui.QIcon('res/recieve'), 'Recieve', self)
         rb.setStatusTip('Recieve')
         rb.setShortcut('Ctrl+Shift+g')
         rb.triggered.connect(self.get_btn)
+
 
         self.toolbar = self.addToolBar("Options")
 
@@ -137,19 +148,17 @@ class Main(QtGui.QMainWindow):
         self.toolbar.addAction(self.pasteText)
         self.toolbar.addAction(self.undoFunc)
         self.toolbar.addAction(self.redoFunc)
-
-        self.toolbar.addSeparator()
-
         self.toolbar.addAction(findAction)
-        self.toolbar.addAction(shareAction)
         self.toolbar.addAction(rb)
 
         self.toolbar.addSeparator()
 
         self.addToolBarBreak()
 
+    
+    
     def myFormatbar(self):
-
+        
         textStyle = QtGui.QFontComboBox(self)
         textStyle.currentFontChanged.connect(self.textStyle)
 
@@ -159,13 +168,13 @@ class Main(QtGui.QMainWindow):
         textSize.setMinimumContentsLength(3)
         textSize.activated.connect(self.textSize)
 
-        textSizes = ['6', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20',
-                     '22', '24', '26', '28', '32', '36', '48', '72']
+        textSizes = ['6','7','8','9','10','11','12','14','16','18','20',
+                    '22','24','26','28','32','36','48','72']
 
         for i in textSizes:
             textSize.addItem(i)
 
-        fontCol = QtGui.QAction(QtGui.QIcon('res/fontCol'), 'Font Color', self)
+        fontCol = QtGui.QAction(QtGui.QIcon('res/fontCol'),'Font Color',self)
         fontCol.triggered.connect(self.textCol)
 
         hiCol = QtGui.QAction(QtGui.QIcon('res/hiCol'), 'Highlight text', self)
@@ -186,22 +195,23 @@ class Main(QtGui.QMainWindow):
         underlineAction.setShortcut('Ctrl+U')
         underlineAction.triggered.connect(self.underline)
 
-        indentAction = QtGui.QAction(QtGui.QIcon('res/indent'), "Indent text", self)
+        indentAction = QtGui.QAction(QtGui.QIcon('res/indent'),"Indent text",self)
         indentAction.setStatusTip('Indent')
         indentAction.setShortcut('Ctrl+Tab')
         indentAction.triggered.connect(self.Indent)
 
-        alignRightAction = QtGui.QAction(QtGui.QIcon('res/rightAllign'), "Align text Right", self)
+        alignRightAction = QtGui.QAction(QtGui.QIcon('res/rightAllign'),"Align text Right",self)
         alignRightAction.setStatusTip('Align Right')
         alignRightAction.triggered.connect(self.alignRight)
 
-        alignLeftAction = QtGui.QAction(QtGui.QIcon('res/leftAllign'), "Align text Left", self)
+        alignLeftAction = QtGui.QAction(QtGui.QIcon('res/leftAllign'),"Align text Left",self)
         alignLeftAction.setStatusTip('Align Left')
         alignLeftAction.triggered.connect(self.alignLeft)
 
         alignCenterAction = QtGui.QAction(QtGui.QIcon('res/CenterAllign'), "Align text Center", self)
         alignCenterAction.setStatusTip('Align Center')
         alignCenterAction.triggered.connect(self.alignCenter)
+
 
         bulletList = QtGui.QAction(QtGui.QIcon('res/bullet'), 'Bulleted List', self)
         bulletList.setStatusTip('Bulleted List')
@@ -238,13 +248,8 @@ class Main(QtGui.QMainWindow):
         self.formatbar.addAction(italicAction)
         self.formatbar.addAction(underlineAction)
 
-    def myMenubar(self):
-        """
-            self :parameter
-            :return: None
 
-            Designs menu items in Menu such as File and Edit.
-        """
+    def myMenubar(self):
         menubar = self.menuBar()
         file = menubar.addMenu("File")
         edit = menubar.addMenu("Edit")
@@ -261,15 +266,11 @@ class Main(QtGui.QMainWindow):
         edit.addAction(self.undoFunc)
         edit.addAction(self.redoFunc)
 
-    def win_features(self):
-        """
-            :parameter: self
-            :return: None
 
-            This function provides features such as toolbar, menubar etc..... by calling the functions defined above.
-        """
-        super(Main, self).__init__()
-        self.setGeometry(100, 100, 1030, 800)
+
+    def win_features(self):
+        super(Main,self).__init__()
+        self.setGeometry(100,100,1030,800)
         self.setWindowTitle("ProPoint - Untitled")
         self.setWindowIcon(QtGui.QIcon('res/logo1.png'))
 
@@ -282,71 +283,33 @@ class Main(QtGui.QMainWindow):
         self.text.cursorPositionChanged.connect(self.curPosition)
 
     def new_file(self):
-        """
-            :parameter: self
-            :return: None
-
-            This function creates a new file.
-        """
         temp1 = Main(self)
         temp1.show()
 
     def open_file(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function opens an existing file.
-        """
-
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open')
+        filename = QtGui.QFileDialog.getOpenFileName(self,'Open')
         self.setWindowTitle(filename)
-        file = open(filename, 'r')
+        file = open(filename,'r')
 
         with file:
             content = file.read()
             self.text.setText(content)
 
     def save_file(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function saves a file.
-        """
-        filename = QtGui.QFileDialog.getSaveFileName(self, 'Save')
-        file = open(filename, 'w')
+        filename = QtGui.QFileDialog.getSaveFileName(self,'Save')
+        file = open(filename,'w')
         content = self.text.toPlainText()
         file.write(content)
 
         file.close()
 
-    def bullet_list(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function creates a bulleted list.
-        """
-
+    def bullet_list(self) :
         cur.insertList(QtGui.QTextListFormat.ListDisc)
 
     def num_list(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function creates a Numbered list.
-        """
         cur.insertList(QtGui.QTextListFormat.ListDecimal)
 
     def Indent(self):
-        """
-                :parameter: self
-                :return: None
-
-                This function indents the document.
-        """
         tab = "\t"
         start = cur.selectionStart()
         end = cur.selectionEnd()
@@ -360,9 +323,9 @@ class Main(QtGui.QMainWindow):
         cursor.movePosition(cursor.StartOfLine)
         start = cursor.position()
 
-        while cursor.position() < end:
+        while cursor.position() < end :
             global var
-            # print(cursor.position(),end)
+            #print(cursor.position(),end)
 
             cursor.movePosition(cursor.StartOfLine)
             cursor.insertText(tab)
@@ -370,39 +333,15 @@ class Main(QtGui.QMainWindow):
             end += len(tab)
 
     def alignLeft(self):
-        """
-                :parameter: self
-                :return: None
-
-                This function aligns the document left.
-        """
         self.text.setAlignment(Qt.AlignLeft)
 
     def alignRight(self):
-        """
-                :parameter: self
-                :return: None
-
-                This function aligns the document Right.
-        """
         self.text.setAlignment(Qt.AlignRight)
 
     def alignCenter(self):
-        """
-            :parameter: self
-            :return: None
-
-            This function aligns the document to center.
-        """
         self.text.setAlignment(Qt.AlignCenter)
 
     def bold(self):
-        """
-            :parameter: self
-            :return: None
-
-            This function makes the selected text Bold.
-        """
         weight = self.text.fontWeight()
         if weight == 50:
             self.text.setFontWeight(QtGui.QFont.Bold)
@@ -410,12 +349,6 @@ class Main(QtGui.QMainWindow):
             self.text.setFontWeight(QtGui.QFont.Normal)
 
     def italic(self):
-        """
-                :parameter: self
-                :return: None
-
-                This function makes the selected text italic.
-        """
         incline = self.text.fontItalic()
 
         if incline == False:
@@ -424,104 +357,28 @@ class Main(QtGui.QMainWindow):
             self.text.setFontItalic(False)
 
     def underline(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function underlines the selected text.
-        """
         uline = self.text.fontUnderline()
         if uline == False:
             self.text.setFontUnderline(True)
         elif uline == True:
             self.text.setFontUnderline(False)
 
-    def textStyle(self, font):
-        """
-                    :parameter: self
-                    :return: None
 
-                    This function changes the font style.
-         """
+    def textStyle(self,font):
         self.text.setCurrentFont(font)
 
-    def textSize(self, fontsize):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function changes the text size.
-        """
+    def textSize(self,fontsize):
         self.text.setFontPointSize(int(fontsize))
 
     def textCol(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function sets the font colour.
-        """
         col = QtGui.QColorDialog.getColor()
         self.text.setTextColor(col)
 
     def highlight(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function sets the background of the font.
-        """
         col = QtGui.QColorDialog.getColor()
         self.text.setTextBackgroundColor(col)
 
-    def Share(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    Builds a dialog box to input the data in order to share the document.
-        """
-        share1 = Share(self)
-        share1.show()
-
-        def shareHandler():
-            uName = share1.userTextBox.toPlainText()
-            for i in uName:
-                if ((i >= 'a' and i <= 'z') or (i >= 'A' and i <= 'Z')):
-                     flag =1
-                else:
-                    flag = 0
-            if flag == 1:
-                print(uName)
-            else:
-                QMessageBox.warning(QWidget(), "Message","Enter valid User Name \n Username must consist of only alphabets")
-            #flag = 0
-
-            dName = share1.docTextBox.toPlainText()
-            for i in dName:
-                if ((i >= 'a' and i <= 'z') or (i >= 'A' and i <= 'Z')):
-                    flag = 1
-                else:
-                    flag = 0
-            if flag == 1:
-                print(dName)
-            else:
-                QMessageBox.warning(QWidget(), "Message","Enter valid Document Name \n Document Name must consist of atleast 1 alphabet")
-
-
-            k = share1.kTextBox.toPlainText()
-            print (k)
-
-        share1.share.clicked.connect(shareHandler)
-
-
     def Find(self):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function has the code to implement the cases to find a string in the editor window.
-        """
         global f
 
         find = Find(self)
@@ -563,25 +420,12 @@ class Main(QtGui.QMainWindow):
         find.src.clicked.connect(handleFind)
         find.replaceButton.clicked.connect(handleReplace)
 
-    def curPosition(self):
-        """
-                :parameter: self
-                :return: None
 
-                This function provides the position of the cursor.
-        """
-        self.senderThread.start()
+    def curPosition(self):
         global data
         data = str(self.text.toPlainText())
-        self.text.blockSignals(True)
-        global r_data
-        r_data = data
-        # r_data = str(self.text.setText(r_data))
-        # self.text.moveCursor(QtGui.QTextCursor.End)
-        self.text.blockSignals(False)
         print data
-        # self.send_data(data)
-
+        self.send_data(data)
 
         global cur
         cur = self.text.textCursor()
@@ -589,64 +433,30 @@ class Main(QtGui.QMainWindow):
         col_no = cur.columnNumber()
         self.mystatusbar.showMessage("Line : {} | Column : {}".format(line_no, col_no))
 
-    def get_btn(self, r_data):
-        """
-                    :parameter: self
-                    :return: None
-
-                    This function is used to recieve the document from database.
-        """
-        r.connect("localhost", 28015).repl()
-        list = r.db('test').table_list().run()
-        if "proPoints" in list:  # its proPoints not proPoint
-            var = r.db('test').table('proPoints').get(2).run()
-            print(var)
-            var1 = QString(var['value'])
-            var2 = QString(var['user'])
-            if var2 == "pujam":
-                self.text.setText(var1)
-        #else:
-            #self.send_btn(" ")
-
-
-
-
-
-class SenderThread(QThread):
-    """
-        :parameter: self
-
-        This class implemets  methods to create new thread for updating the database.
-    """
-    def __init__(self, parent=None):
-        QThread.__init__(self, parent)
-
-    def run(self):
-        time.sleep(1)
-        print "Send call"
-        self.send_data(data)
-        print "Sent"
-        print "Thread done"
-
     def send_data(self, data):
-        r.connect("localhost", 28015).repl()
-        list = r.db('test').table_list().run()
-        if "proPoints" in list:  # its proPoints not proPoint
+        r.connect( "localhost", 28015).repl()
+        list=r.db('test').table_list().run()
+        if "proPoint" in list:
             print("table exists")
-            r.table("proPoints").get(2).update({
-                "user": "pujam",
-                "value": data
+            r.table("proPoint").get(2).update({
+                "value" : data
             }).run()
             print("updated")
         else:
-            r.db("test").table_create("proPoints").run()
-            r.table("proPoints").insert({
-                "id": 2,
-                "user": "pujam",
-                "value": "robin"
+            r.db("test").table_create("proPoint").run()
+            r.table("proPoint").insert({
+                "id" : 2,
+                "value" : "robin"
             }).run()
             print("inserted")
         print("finished")
+
+    def get_btn(self):
+        r.connect( "localhost", 28015).repl()
+        var=r.db('test').table('proPoint').get(2).run()
+        print(var)
+        var1 = QString(var['value'])
+        self.text.setText(var1)
 
 
 def main():
@@ -656,5 +466,5 @@ def main():
     sys.exit(app.exec_())
 
 
-if __name__ == "__main__":
+if __name__ =="__main__":
     main()
