@@ -16,3 +16,6 @@ RethinkDB
 PyCharm (IDE)
 
 PyBuilder (Build Tool) etc.
+
+# How to use
+To use this you first need Rethinkdb installed in your computer. If installed start the server in backend and enjoy coding.
